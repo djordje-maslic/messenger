@@ -1,0 +1,123 @@
+// Copyright © 2022-2026 IT ENGINEERING MANAGEMENT INC,
+//                       <https://github.com/team113>
+//
+// This program is free software: you can redistribute it and/or modify it under
+// the terms of the GNU Affero General Public License v3.0 as published by the
+// Free Software Foundation, either version 3 of the License, or (at your
+// option) any later version.
+//
+// This program is distributed in the hope that it will be useful, but WITHOUT
+// ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+// FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License v3.0 for
+// more details.
+//
+// You should have received a copy of the GNU Affero General Public License v3.0
+// along with this program. If not, see
+// <https://www.gnu.org/licenses/agpl-3.0.html>.
+
+import 'package:flutter_test/flutter_test.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:get/get_instance/src/extension_instance.dart';
+import 'package:get/get_rx/src/rx_types/rx_types.dart';
+import 'package:gherkin/gherkin.dart';
+import 'package:medea_jason/medea_jason.dart';
+import 'package:messenger/domain/model/media_settings.dart';
+import 'package:messenger/store/settings.dart';
+import 'package:messenger/ui/page/home/page/my_profile/controller.dart';
+import 'package:messenger/ui/page/home/page/my_profile/microphone_switch/controller.dart';
+import 'package:messenger/util/media_utils.dart';
+
+import '../configuration.dart';
+import '../world/custom_world.dart';
+
+/// Sets the media.
+final StepDefinitionGeneric setMedia = then<CustomWorld>(
+  'User sets media',
+  (context) async {
+    // Get.put(MicrophoneSwitchController(SettingsRepositoryMock()));
+    final MyProfileController profileController = Get.find();
+   // final MicrophoneSwitchController microphoneSwitchController= Get.find();
+
+
+    profileController.devices.value = devices;
+    profileController.media.value= MediaSettings(
+      videoDevice: 'video',
+      audioDevice: 'input',
+      outputDevice: 'audio',
+    );
+// microphoneSwitchController.devices.value=[ FakeDeviceDetails(
+//   newId: 'input',
+//   newKind: MediaDeviceKind.audioInput,
+//   newLabel: 'test mic',
+//   newDeviceId: 'input',
+//
+// ),];
+
+  },
+  configuration: StepDefinitionConfiguration()
+    ..timeout = const Duration(minutes: 5),
+);
+
+List<DeviceDetails> devices = List.of([
+  FakeDeviceDetails(
+    newId: 'audio',
+    newKind: MediaDeviceKind.audioOutput,
+    newLabel: 'test speaker',
+    newDeviceId: 'audio',
+    newAudioDeviceKind: AudioDeviceKind.speakerphone,
+  ),
+  FakeDeviceDetails(
+    newId: 'input',
+    newKind: MediaDeviceKind.audioInput,
+    newLabel: 'test mic',
+    newDeviceId: 'input',
+
+  ),
+  FakeDeviceDetails(
+    newId: 'video',
+    newKind: MediaDeviceKind.videoInput,
+    newLabel: 'test cam',
+    newDeviceId: 'video',
+  ),
+]);
+
+class FakeDeviceDetails implements DeviceDetails {
+  FakeDeviceDetails({
+    required this.newId,
+    required this.newDeviceId,
+    required this.newLabel,
+    required this.newKind,
+    this.newAudioDeviceKind,
+  });
+
+  final String newLabel;
+  final MediaDeviceKind newKind;
+  final String newId;
+  final String newDeviceId;
+  final AudioDeviceKind? newAudioDeviceKind;
+
+  @override
+  String id() => newId;
+
+  @override
+  String? groupId() => 'group_1';
+
+  @override
+  bool isFailed() => false;
+
+  @override
+  void free() {}
+
+  @override
+  String deviceId() => newDeviceId;
+
+  @override
+  MediaDeviceKind kind() => newKind;
+
+  @override
+  String label() => newLabel;
+
+  @override
+  AudioDeviceKind? audioDeviceKind() => null;
+}
+//class SettingsRepositoryMock extends Fake implements SettingsRepository{}
